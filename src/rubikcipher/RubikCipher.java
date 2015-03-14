@@ -106,21 +106,22 @@ public class RubikCipher {
      */
     public void doFeistel(){
         String rubikResult;
-        L = new String[numIteration];
-        R = new String[numIteration];
+        L = new String[numIteration+1];
+        R = new String[numIteration+1];
         
         L[0] = inputBinary.substring(0, 48);
         R[0] = inputBinary.substring(48, 96);
         
-        for (int i=1; i<numIteration; i++) {
+        for (int i=1; i<numIteration+1; i++) {
             L[i] = R[i-1];
-            
             //DO RUBIK PERMUTATION
-            rubikResult = R[i-1];
+            rubik.putAllBit(R[i-1]);
+            rubik.doRotation(key[i-1]);
+            rubikResult = rubik.readAllBit();
             R[i] = XOR(L[i-1], rubikResult);
         }
         
-        outBinary = L[numIteration-1] + R[numIteration-1];
+        outBinary = L[numIteration] + R[numIteration];
         outBlock = fromBinary(outBinary);
     }
     
