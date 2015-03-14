@@ -22,6 +22,7 @@ public class RubikCipher {
     private String[] R; //right part String in fiestel
     private String[] key; //internal key
 
+    private Rubik rubik;
     
     /**
      * MAIN
@@ -113,6 +114,7 @@ public class RubikCipher {
         
         for (int i=1; i<numIteration; i++) {
             L[i] = R[i-1];
+            
             //DO RUBIK PERMUTATION
             rubikResult = R[i-1];
             R[i] = XOR(L[i-1], rubikResult);
