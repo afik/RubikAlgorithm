@@ -31,9 +31,11 @@ public class RubikCipher {
         String input = "HaiApaKabar?";
         String key = "yola";
         RubikCipher rc = new RubikCipher();
-        System.out.println(rc.setValidInput(input) + " " + rc.getInputBlock() + " " + rc.getInputBinary());
+        rc.setValidInput(input);
+        System.out.println(rc.getInputBlock() + " " + rc.getInputBinary());
         rc.prepareKey(key);
         rc.doFeistel();
+        System.out.println(rc.getOutBinary() + " " + rc.getOutBlock());
     }
     
     
@@ -109,17 +111,19 @@ public class RubikCipher {
         L[0] = inputBinary.substring(0, 48);
         R[0] = inputBinary.substring(48, 96);
         
-        for (int i=1; i<numIteration-1; i++) {
-            L[i+1] = R[0];
+        for (int i=1; i<numIteration; i++) {
+            L[i] = R[i-1];
             //DO RUBIK PERMUTATION
-            rubikResult = R[0];
-            R[i+1] = XOR(L[i], rubikResult);
+            rubikResult = R[i-1];
+            R[i] = XOR(L[i-1], rubikResult);
         }
         
+        outBinary = L[numIteration-1] + R[numIteration-1];
+        outBlock = fromBinary(outBinary);
     }
     
     /**
-     * Return binary value of teks
+     * Convert teks to binaryString
      * Each character parsed into 8 binary char
      */
     public String toBinary(String teks) {
@@ -140,6 +144,24 @@ public class RubikCipher {
         return binary;
     }
     
+    /**
+     * Convert binary to normal string
+     */
+    public String fromBinary(String binary){
+        String retval ="";
+        int ascii;
+        String bitProcess;
+        while(binary.length() % 8 != 0){
+            binary = '0' + binary;
+        }
+        while(binary.length()>0){
+            bitProcess = binary.substring(0,8);
+            ascii = Integer.parseInt(bitProcess,2);
+            retval += (char)ascii;
+            binary = binary.substring(8);
+        }
+        return retval;
+    }
     
     /**
      * XOR operation on Binary String
