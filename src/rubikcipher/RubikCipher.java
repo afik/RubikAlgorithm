@@ -22,7 +22,7 @@ public class RubikCipher {
     private String[] R; //right part String in fiestel
     private String[] key; //internal key
 
-    private Rubik rubik;
+    public Rubik rubik = new Rubik();
     
     /**
      * MAIN
@@ -37,6 +37,7 @@ public class RubikCipher {
         rc.prepareKey(key);
         rc.doFeistel();
         System.out.println(rc.getOutBinary() + " " + rc.getOutBlock());
+        
     }
     
     
@@ -126,7 +127,7 @@ public class RubikCipher {
     }
     
     /**
-     * Convert teks to binaryString
+     * Convert text to binaryString
      * Each character parsed into 8 binary char
      */
     public String toBinary(String teks) {
