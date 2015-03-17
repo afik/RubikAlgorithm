@@ -37,38 +37,151 @@ public class RubikCipher {
      */
     public static void main(String[] args) {
         RubikCipher rc = new RubikCipher();
-        //String input = rc.readFile("D:\\AFIK\\Project\\Rubik cipher\\lorem.txt");
-        String input = "Haloapakabar";
+        String input = rc.readFile("D:\\AFIK\\Project\\Rubik cipher\\lorem.txt");
+//        String input = "Haloapakabar";
         String key = "haloapakabar";
         System.out.println(input.length());
-        int numDo = input.length()/12;
-        int idx = 0;
+//        rc.prepareKey(key);
+        
+        String ct = rc.EcbEncrypt(input, key);
+        System.out.println();
+        //decrypt
+        
+        String pt = rc.EcbDecrypt(ct, key);
+        
+//        rc.setValidInput(input);
+//        rc.prepareKey1(key);
+//        rc.doFeistel();
+//        System.out.println(rc.getOutBinary() + " " + rc.getOutBlock());
+//        rc.setValidInput(rc.getOutBlock());
+//        rc.reverseFeistel();
+//        System.out.println(rc.getOutBinary() + " " + rc.getOutBlock());
+    }
+    
+    /**
+     * ECB mode encryption
+     */
+    public String EcbEncrypt(String plaintext, String key) {
+        int numDo;
         String inputB, outB, result="";
-        rc.prepareKey1(key);
+        
+        if (plaintext.length() % 12 == 0)
+            numDo = plaintext.length()/12;
+        else 
+            numDo = (plaintext.length()/12) + 1;
+        int idx = 0;
+        prepareKey(key);
             
         
         for (int i=0; i<numDo; i++) {
-            inputB = input.substring(idx, idx+12);
-            rc.setValidInput(inputB);
-            rc.doFeistel();
-            outB = rc.outBlock;
+            if (i != numDo-1)
+                inputB = plaintext.substring(idx, idx+12);
+            else 
+                inputB = plaintext.substring(idx);
+            setValidInput(inputB);
+            doFeistel();
+            outB = outBlock;
+            result+=outB;
+            idx +=12;
+        }
+        
+        System.out.println("ciphertext " + result);
+        return result;
+    }
+    
+    /**
+     * ECB mode decryption
+     */
+    public String EcbDecrypt(String ciphertext, String key){
+        int numDo, idx = 0;
+        String result ="", outB, inputB;
+        if (ciphertext.length() % 12 == 0)
+            numDo = ciphertext.length()/12;
+        else 
+            numDo = (ciphertext.length()/12) + 1;
+        prepareKey(key);
+        
+        for (int i=0; i<numDo; i++) {
+            if (i != numDo-1)
+                inputB = ciphertext.substring(idx, idx+12);
+            else 
+                inputB = ciphertext.substring(idx);
+            setValidInput(inputB);
+            reverseFeistel();
+            outB = outBlock;
                 result+=outB;
             idx +=12;
         }
         
-        System.out.println(result);
-        
-        
-        for (int i = 0; i < rc.numIteration; i++) {
-            System.out.println(rc.key[i]);
-        }
-        rc.setValidInput(input);
-        rc.doFeistel();
-        System.out.println(rc.getOutBinary() + " " + rc.getOutBlock());
-        rc.reverseFeistel();
-        System.out.println(rc.getInputBinary() + " " + rc.getInputBlock());
+        System.out.println("plaintext : " + result);
+        return result;
     }
     
+    /**
+     * CBC mode encryption
+     */
+    public String CbcEncrypt(String plaintext, String key) {
+        int numDo;
+        String inputB, outB, result="";
+        String outBefore=""; 
+        
+        if (plaintext.length() % 12 == 0)
+            numDo = plaintext.length()/12;
+        else 
+            numDo = (plaintext.length()/12) + 1;
+        int idx = 0;
+        prepareKey(key);
+            
+        
+        for (int i=0; i<numDo; i++) {
+            if (i != numDo-1)
+                inputB = plaintext.substring(idx, idx+12);
+            else 
+                inputB = plaintext.substring(idx);
+            if (i!=0)
+                inputB = XOR(inputB,outBefore);
+            setValidInput(inputB);
+            doFeistel();
+            outB = outBlock;
+            outBefore = outBinary;
+            result+=outB;
+            idx +=12;
+        }
+        
+        System.out.println("ciphertext " + result);
+        return result;
+    }
+    
+    /**
+     * CBC mode decryption
+     * BELUM BENER : Syaratnya text yg di dekript panjangnya harus kelipatan 12
+     */
+    public String CbcDecrypt(String ciphertext, String key){
+        int numDo, idx = ciphertext.length();
+        String result ="", outB, inputB, outBin;
+        
+        if (ciphertext.length() % 12 == 0)
+            numDo = ciphertext.length()/12;
+        else 
+            numDo = (ciphertext.length()/12) + 1;
+        prepareKey(key);
+        
+        for (int i=numDo-1; i>=0; i--) {
+            if (i != numDo-1)
+                inputB = ciphertext.substring(idx-12);
+            else 
+                inputB = ciphertext.substring(idx-12, idx);
+            setValidInput(inputB);
+            reverseFeistel();
+            outBin = XOR(outBinary, ciphertext.substring(idx-24, idx-12));
+            outB = fromBinary(outBin);
+            result+=outB;
+            idx -=12;
+        }
+        
+        System.out.println("plaintext : " + result);
+        return result;
+    }
     
     /** 
      * Set InputBlock
@@ -106,7 +219,7 @@ public class RubikCipher {
      * key internal = key1 + key3 + key2 + key4
      * @return 1 if success, -1 if failed
      */
-    public int prepareKey(String bKey) {
+    public int prepareKey1(String bKey) {
         int retVal=-1;
         String tkey, left, right, xorKey, key1, key2, key3, key4;
         String eKey = toBinary(bKey);
@@ -141,7 +254,7 @@ public class RubikCipher {
      * length of key must > 1
      * @return 1 if success, -1 if failed
      */
-    public int prepareKey1(String eKey) {
+    public int prepareKey(String eKey) {
         int retVal=-1;
         if (eKey.length() > 1) {
             key = new String[numIteration];
@@ -154,7 +267,7 @@ public class RubikCipher {
                 }
                 key[j] = res;
                 temp = key[j];
-                System.out.println(key[j]);
+                //System.out.println(key[j]);
             }
          
             retVal = 1;
@@ -198,8 +311,8 @@ public class RubikCipher {
         L = new String[numIteration+1];
         R = new String[numIteration+1];
         
-        L[numIteration] = outBinary.substring(0, 48);
-        R[numIteration] = outBinary.substring(48, 96);
+        L[numIteration] = inputBinary.substring(0, 48);
+        R[numIteration] = inputBinary.substring(48, 96);
         
         for (int i=numIteration; i>0; i--) {
             R[i-1] = L[i];
@@ -208,11 +321,11 @@ public class RubikCipher {
             rubik.doRotation(key[i-1]);
             rubikResult = rubik.readAllBit();
             L[i-1] = XOR(R[i], rubikResult);
-            System.out.println(i + " " + L[i] + " " + R[i]);
+//            System.out.println(i + " " + L[i] + " " + R[i]);
         }
         
-        inputBinary = L[0] + R[0];
-        inputBlock = fromBinary(inputBinary);
+        outBinary = L[0] + R[0];
+        outBlock = fromBinary(outBinary);
     }
     
     /**
