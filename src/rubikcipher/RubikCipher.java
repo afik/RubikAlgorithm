@@ -4,6 +4,13 @@
 
 package rubikcipher;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 
 /**
  *
@@ -14,7 +21,7 @@ public class RubikCipher {
     private String inputBlock; //input teks : 12 char
     private String inputBinary; //input teks in BinaryString
     private String extKey;  //key from user
-    private int numIteration; //length of extKey
+    private int numIteration = 12; //length of extKey
     private String outBlock; //output teks
     private String outBinary; //output teks in BinaryString
     
@@ -29,15 +36,33 @@ public class RubikCipher {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        String input = "HaiApaKabar?";
-        String key = "yola";
         RubikCipher rc = new RubikCipher();
-        rc.setValidInput(input);
-        System.out.println(rc.getInputBinary() + " " + rc.getInputBlock());
-        rc.prepareKey(key);
+        //String input = rc.readFile("D:\\AFIK\\Project\\Rubik cipher\\lorem.txt");
+        String input = "Haloapakabar";
+        String key = "haloapakabar";
+        System.out.println(input.length());
+        int numDo = input.length()/12;
+        int idx = 0;
+        String inputB, outB, result="";
+        rc.prepareKey1(key);
+            
+        
+        for (int i=0; i<numDo; i++) {
+            inputB = input.substring(idx, idx+12);
+            rc.setValidInput(inputB);
+            rc.doFeistel();
+            outB = rc.outBlock;
+                result+=outB;
+            idx +=12;
+        }
+        
+        System.out.println(result);
+        
+        
         for (int i = 0; i < rc.numIteration; i++) {
             System.out.println(rc.key[i]);
         }
+        rc.setValidInput(input);
         rc.doFeistel();
         System.out.println(rc.getOutBinary() + " " + rc.getOutBlock());
         rc.reverseFeistel();
@@ -75,31 +100,64 @@ public class RubikCipher {
     }
     
     /**
+     * eKey/2 XOR eKey/2 = key1 + key2
+     * key 3 = NOT(key1)
+     * key 4 = NOT(key2)
+     * key internal = key1 + key3 + key2 + key4
+     * @return 1 if success, -1 if failed
+     */
+    public int prepareKey(String bKey) {
+        int retVal=-1;
+        String tkey, left, right, xorKey, key1, key2, key3, key4;
+        String eKey = toBinary(bKey);
+        if (eKey.length() == 96) {
+            key = new String[numIteration];
+            left = eKey.substring(0, 48);
+            right = eKey.substring(48,96);
+            System.out.println(fromBinary(left));
+            for (int i = 0; i < numIteration; i++) {
+                xorKey = XOR(left, right);
+                key1 = xorKey.substring(0,24);
+                key2 = xorKey.substring(24,48);
+                key3 = NOT(key1);
+                key4 = NOT(key2);
+                
+                tkey = key1+key3+key2+key4;
+                
+                left = tkey.substring(0,48);
+                right = tkey.substring(48,96);
+                
+                key[i] = tkey;
+            }
+            
+            
+            retVal = 1;
+        }
+        return retVal;
+    }
+    
+    /**
      * Set numIteration, internal key, and external key
      * length of key must > 1
      * @return 1 if success, -1 if failed
      */
-    public int prepareKey(String eKey) {
+    public int prepareKey1(String eKey) {
         int retVal=-1;
         if (eKey.length() > 1) {
-            key = new String[eKey.length()];
-            String temp = eKey.toLowerCase();
+            key = new String[numIteration];
+            String temp = eKey;
             String res;
-            for (int j=0; j<eKey.length();j++){
+            for (int j=0; j<numIteration;j++){
                 res = "";
                 for (int i=0; i<temp.length();i++) {
-                    res += (char) ((temp.charAt(i) + 4 - (int)'a') % 25 + (int)'a');
+                    res += (char) ((temp.charAt(i) + (int) temp.charAt(0)- (int)'a') % 255 + (int)'a');
                 }
                 key[j] = res;
-                temp = res;
+                temp = key[j];
+                System.out.println(key[j]);
             }
-
-            numIteration = eKey.length();           extKey = eKey.toLowerCase();
+         
             retVal = 1;
-
-        }
-        else {
-            retVal = -1;
         }
         return retVal;
     }
@@ -123,7 +181,7 @@ public class RubikCipher {
             rubik.doRotation(key[i-1]);
             rubikResult = rubik.readAllBit();
             R[i] = XOR(L[i-1], rubikResult);
-            System.out.println(i + " " + L[i] + " " + R[i]);
+           // System.out.println(i + " " + L[i] + " " + R[i]);
         }
         
         outBinary = L[numIteration] + R[numIteration];
@@ -220,6 +278,45 @@ public class RubikCipher {
         
         return retVal;
     }
+    
+    /**
+     * NOT operation on Binary String
+     */
+    public String NOT(String left){
+        String retVal="";
+        int ch;
+        
+        for (int i = 0; i<left.length(); i++) {
+            if (left.charAt(i) == '0') {
+                ch = 1;
+            }
+            else {
+                ch = 0;
+            }
+            retVal += ch;
+        }
+        
+        return retVal;
+    }
+    
+    /**
+     * Read file text
+     * @return String from text
+     */
+    public String readFile(String path){
+        String msg = "";
+        try {
+            Path p = Paths.get(path);
+            byte[] hiddenText = Files.readAllBytes(p);
+            String value = new String(hiddenText, "UTF-8");
+            msg = value;
+        } catch (IOException ex) {
+            Logger.getLogger(RubikCipher.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return msg;
+    }
+    
+    
     /// GETTER AND SETTER
     
     /**
