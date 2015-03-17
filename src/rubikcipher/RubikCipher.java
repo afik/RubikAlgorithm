@@ -33,11 +33,15 @@ public class RubikCipher {
         String key = "yola";
         RubikCipher rc = new RubikCipher();
         rc.setValidInput(input);
-        System.out.println(rc.getInputBlock() + " " + rc.getInputBinary());
+        System.out.println(rc.getInputBinary() + " " + rc.getInputBlock());
         rc.prepareKey(key);
+        for (int i = 0; i < rc.numIteration; i++) {
+            System.out.println(rc.key[i]);
+        }
         rc.doFeistel();
         System.out.println(rc.getOutBinary() + " " + rc.getOutBlock());
-        
+        rc.reverseFeistel();
+        System.out.println(rc.getInputBinary() + " " + rc.getInputBlock());
     }
     
     
@@ -90,8 +94,7 @@ public class RubikCipher {
                 temp = res;
             }
 
-            numIteration = eKey.length();
-            extKey = eKey.toLowerCase();
+            numIteration = eKey.length();           extKey = eKey.toLowerCase();
             retVal = 1;
 
         }
@@ -120,10 +123,37 @@ public class RubikCipher {
             rubik.doRotation(key[i-1]);
             rubikResult = rubik.readAllBit();
             R[i] = XOR(L[i-1], rubikResult);
+            System.out.println(i + " " + L[i] + " " + R[i]);
         }
         
         outBinary = L[numIteration] + R[numIteration];
         outBlock = fromBinary(outBinary);
+    }
+    
+    /**
+     * used for decrypt the message
+     * perform Feistel from down to top
+     * using reverseRotation of Rubik
+     */
+    public void reverseFeistel(){
+        String rubikResult;
+        L = new String[numIteration+1];
+        R = new String[numIteration+1];
+        
+        L[numIteration-1] = outBinary.substring(0, 48);
+        R[numIteration-1] = outBinary.substring(48, 96);
+        
+        for (int i=numIteration-1; i>0; i--) {
+            R[i-1] = L[i];
+            //DO RUBIK PERMUTATION
+            rubik.putAllBit(L[i]);
+            rubik.reverseRotation(key[i]);
+            rubikResult = rubik.readAllBit();
+            L[i-1] = XOR(R[i], rubikResult);
+        }
+        
+        inputBinary = L[0] + R[0];
+        inputBlock = fromBinary(inputBinary);
     }
     
     /**
