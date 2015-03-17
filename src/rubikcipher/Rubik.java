@@ -301,11 +301,11 @@ public class Rubik {
         temp[5][7] = elmt[2][7];
         
         temp[0][0] = elmt[4][4];
-        temp[0][6] = elmt[4][3];
-        temp[0][7] = elmt[4][2];
-        temp[4][3] = elmt[5][6];
-        temp[4][4] = elmt[5][7];
-        temp[4][5] = elmt[5][0];
+        temp[0][7] = elmt[4][3];
+        temp[0][6] = elmt[4][2];
+        temp[4][4] = elmt[5][0];
+        temp[4][3] = elmt[5][7];
+        temp[4][2] = elmt[5][6];
         
         //copy back temp to elmt
         for (int i = 0; i<6; i++) {
@@ -643,49 +643,16 @@ public class Rubik {
         }
         
         //do rotation on temp
-        for (int i = 0; i<8; i++) {
-            if (i==6)
-                temp[0][i] = elmt[0][0];
-            else if (i==7)
-                temp[0][i] = elmt[0][1];
-            else 
-                temp[0][i] = elmt[0][i+2];
-        }
-        for (int i = 0; i<8; i++) {
-            if (i==0)
-                temp[5][i] = elmt[5][6];
-            else if (i==1)
-                temp[5][i] = elmt[5][7];
-            else 
-                temp[5][i] = elmt[5][i-2];
-        }
-        temp[1][0] = elmt[4][0];
-        temp[1][1] = elmt[4][1];
-        temp[1][2] = elmt[4][2];
-        temp[1][6] = elmt[4][6];
-        temp[1][5] = elmt[4][5];
-        temp[1][4] = elmt[4][4];
+        temp[1][7] = elmt[4][7];
+        temp[1][3] = elmt[4][3];
+        temp[2][7] = elmt[1][7];
+        temp[2][3] = elmt[1][3];
         
-        temp[2][0] = elmt[1][0];
-        temp[2][1] = elmt[1][1];
-        temp[2][2] = elmt[1][2];
-        temp[2][6] = elmt[1][6];
-        temp[2][5] = elmt[1][5];
-        temp[2][4] = elmt[1][4];
+        temp[3][7] = elmt[2][7];
+        temp[3][3] = elmt[2][3];
+        temp[4][7] = elmt[3][7];
+        temp[4][3] = elmt[3][3];
         
-        temp[4][0] = elmt[3][0];
-        temp[4][1] = elmt[3][1];
-        temp[4][2] = elmt[3][2];
-        temp[4][6] = elmt[3][6];
-        temp[4][5] = elmt[3][5];
-        temp[4][4] = elmt[3][4];
-        
-        temp[3][0] = elmt[2][0];
-        temp[3][1] = elmt[2][1];
-        temp[3][2] = elmt[2][2];
-        temp[3][6] = elmt[2][6];
-        temp[3][5] = elmt[2][5];
-        temp[3][4] = elmt[2][4];
         
         //copy back temp to elmt
         for (int i = 0; i<6; i++) {
@@ -701,49 +668,16 @@ public class Rubik {
         }
         
         //do rotation on temp
-        for (int i = 0; i<8; i++) {
-            if (i==6)
-                temp[5][i] = elmt[5][0];
-            else if (i==7)
-                temp[5][i] = elmt[5][1];
-            else 
-                temp[5][i] = elmt[5][i+2];
-        }
-        for (int i = 0; i<8; i++) {
-            if (i==0)
-                temp[0][i] = elmt[0][6];
-            else if (i==1)
-                temp[0][i] = elmt[0][7];
-            else 
-                temp[0][i] = elmt[0][i-2];
-        }
-        temp[1][0] = elmt[2][0];
-        temp[1][1] = elmt[2][1];
-        temp[1][2] = elmt[2][2];
-        temp[1][6] = elmt[2][6];
-        temp[1][5] = elmt[2][5];
-        temp[1][4] = elmt[2][4];
+        temp[1][7] = elmt[2][7];
+        temp[1][3] = elmt[2][3];
+        temp[2][7] = elmt[3][7];
+        temp[2][3] = elmt[3][3];
         
-        temp[2][0] = elmt[3][0];
-        temp[2][1] = elmt[3][1];
-        temp[2][2] = elmt[3][2];
-        temp[2][6] = elmt[3][6];
-        temp[2][5] = elmt[3][5];
-        temp[2][4] = elmt[3][4];
+        temp[3][7] = elmt[4][7];
+        temp[3][3] = elmt[4][3];
+        temp[4][7] = elmt[1][7];
+        temp[4][3] = elmt[1][3];
         
-        temp[4][0] = elmt[1][0];
-        temp[4][1] = elmt[1][1];
-        temp[4][2] = elmt[1][2];
-        temp[4][6] = elmt[1][6];
-        temp[4][5] = elmt[1][5];
-        temp[4][4] = elmt[1][4];
-        
-        temp[3][0] = elmt[4][0];
-        temp[3][1] = elmt[4][1];
-        temp[3][2] = elmt[4][2];
-        temp[3][6] = elmt[4][6];
-        temp[3][5] = elmt[4][5];
-        temp[3][4] = elmt[4][4];
         
         //copy back temp to elmt
         for (int i = 0; i<6; i++) {
@@ -759,49 +693,15 @@ public class Rubik {
         }
         
         //do rotation on temp
-        for (int i = 0; i<8; i++) {
-            if (i==6)
-                temp[1][i] = elmt[1][0];
-            else if (i==7)
-                temp[1][i] = elmt[1][1];
-            else 
-                temp[1][i] = elmt[1][i+2];
-        }
-        for (int i = 0; i<8; i++) {
-            if (i==0)
-                temp[3][i] = elmt[3][6];
-            else if (i==1)
-                temp[3][i] = elmt[3][7];
-            else 
-                temp[3][i] = elmt[3][i-2];
-        }
-        temp[0][0] = elmt[2][0];
-        temp[0][7] = elmt[2][7];
-        temp[0][6] = elmt[2][6];
-        temp[0][2] = elmt[2][2];
-        temp[0][3] = elmt[2][3];
-        temp[0][4] = elmt[2][4];
+        temp[0][1] = elmt[2][1];
+        temp[0][5] = elmt[2][5];
+        temp[2][1] = elmt[5][1];
+        temp[2][5] = elmt[5][5];
         
-        temp[2][0] = elmt[5][0];
-        temp[2][7] = elmt[5][7];
-        temp[2][6] = elmt[5][6];
-        temp[2][2] = elmt[5][2];
-        temp[2][3] = elmt[5][3];
-        temp[2][4] = elmt[5][4];
-        
-        temp[4][4] = elmt[0][0];
-        temp[4][3] = elmt[0][7];
-        temp[4][2] = elmt[0][6];
-        temp[4][6] = elmt[0][2];
-        temp[4][7] = elmt[0][3];
-        temp[4][0] = elmt[0][4];
-        
-        temp[5][0] = elmt[4][4];
-        temp[5][7] = elmt[4][3];
-        temp[5][6] = elmt[4][2];
-        temp[5][2] = elmt[4][6];
-        temp[5][3] = elmt[4][7];
-        temp[5][4] = elmt[4][0];
+        temp[5][1] = elmt[4][5];
+        temp[5][5] = elmt[4][1];
+        temp[4][5] = elmt[0][1];
+        temp[4][1] = elmt[0][5];
         
         //copy back temp to elmt
         for (int i = 0; i<6; i++) {
@@ -817,49 +717,15 @@ public class Rubik {
         }
         
         //do rotation on temp
-        for (int i = 0; i<8; i++) {
-            if (i==6)
-                temp[3][i] = elmt[3][0];
-            else if (i==7)
-                temp[3][i] = elmt[3][1];
-            else 
-                temp[3][i] = elmt[3][i+2];
-        }
-        for (int i = 0; i<8; i++) {
-            if (i==0)
-                temp[1][i] = elmt[1][6];
-            else if (i==1)
-                temp[1][i] = elmt[1][7];
-            else 
-                temp[1][i] = elmt[1][i-2];
-        }
-        temp[5][0] = elmt[2][0];
-        temp[5][7] = elmt[2][7];
-        temp[5][6] = elmt[2][6];
-        temp[5][2] = elmt[2][2];
-        temp[5][3] = elmt[2][3];
-        temp[5][4] = elmt[2][4];
+        temp[0][1] = elmt[4][5];
+        temp[0][5] = elmt[4][1];
+        temp[2][1] = elmt[0][1];
+        temp[2][5] = elmt[0][5];
         
-        temp[2][0] = elmt[0][0];
-        temp[2][7] = elmt[0][7];
-        temp[2][6] = elmt[0][6];
-        temp[2][2] = elmt[0][2];
-        temp[2][3] = elmt[0][3];
-        temp[2][4] = elmt[0][4];
-        
-        temp[4][4] = elmt[5][0];
-        temp[4][3] = elmt[5][7];
-        temp[4][2] = elmt[5][6];
-        temp[4][6] = elmt[5][2];
-        temp[4][7] = elmt[5][3];
-        temp[4][0] = elmt[5][4];
-        
-        temp[0][0] = elmt[4][4];
-        temp[0][7] = elmt[4][3];
-        temp[0][6] = elmt[4][2];
-        temp[0][2] = elmt[4][6];
-        temp[0][3] = elmt[4][7];
-        temp[0][4] = elmt[4][0];
+        temp[5][1] = elmt[2][1];
+        temp[5][5] = elmt[2][5];
+        temp[4][5] = elmt[5][1];
+        temp[4][1] = elmt[5][5];
         
         //copy back temp to elmt
         for (int i = 0; i<6; i++) {
