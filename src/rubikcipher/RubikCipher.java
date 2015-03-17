@@ -140,16 +140,17 @@ public class RubikCipher {
         L = new String[numIteration+1];
         R = new String[numIteration+1];
         
-        L[numIteration-1] = outBinary.substring(0, 48);
-        R[numIteration-1] = outBinary.substring(48, 96);
+        L[numIteration] = outBinary.substring(0, 48);
+        R[numIteration] = outBinary.substring(48, 96);
         
-        for (int i=numIteration-1; i>0; i--) {
+        for (int i=numIteration; i>0; i--) {
             R[i-1] = L[i];
             //DO RUBIK PERMUTATION
             rubik.putAllBit(L[i]);
-            rubik.reverseRotation(key[i]);
+            rubik.doRotation(key[i-1]);
             rubikResult = rubik.readAllBit();
             L[i-1] = XOR(R[i], rubikResult);
+            System.out.println(i + " " + L[i] + " " + R[i]);
         }
         
         inputBinary = L[0] + R[0];
